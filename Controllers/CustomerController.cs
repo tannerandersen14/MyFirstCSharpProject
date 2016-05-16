@@ -57,8 +57,26 @@ namespace WebApplication2.Controllers
         }
 
         // DELETE: api/Customer/5
-        public void Delete(int id)
+        [HttpDelete]
+        [Route("api/customer/{customerId}")]
+        public HttpResponseMessage Delete(int customerId)
         {
+            HttpResponseMessage result = null;
+            Customer returnCustomer = null;
+            foreach (Customer customer in Customer.Customers.Values)
+            {
+                if (customer.CustomerId == customerId)
+                {
+                    returnCustomer = customer;
+                }
+            }
+            if (returnCustomer == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            Customer.Customers.Remove(returnCustomer.CustomerId);
+            result = this.Request.CreateResponse(HttpStatusCode.OK, returnCustomer);
+            return result;
         }
     }
 }
